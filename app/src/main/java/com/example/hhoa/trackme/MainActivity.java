@@ -1,5 +1,6 @@
 package com.example.hhoa.trackme;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -107,5 +108,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Tracker.mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        boolean onSave = true;
+        if(onSave) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle("Confirm");
+            builder.setMessage("Do you want to save changes?");
+
+            builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+//                    saveMedia();
+                    dialog.dismiss();
+                    finishAndRemoveTask();
+                }
+            });
+
+            builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Do nothing
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+        else{
+        }
     }
 }

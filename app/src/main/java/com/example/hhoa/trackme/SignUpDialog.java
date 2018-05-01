@@ -70,7 +70,7 @@ public class SignUpDialog extends Dialog implements
                                     if (task.isSuccessful()) {
                                         Tracker.mFirebaseAuth = FirebaseAuth.getInstance();
                                         Tracker.mFirebaseUser = mFirebaseAuth.getCurrentUser();
-                                        Toast.makeText(c, "Your account: " + email, Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(c, "Your ic_account: " + email, Toast.LENGTH_SHORT).show();
                                         Intent intent = new Intent(c, Tracker.class);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                         c.startActivity(intent);
