@@ -45,7 +45,7 @@ public class Tracker extends AppCompatActivity implements
                                     flag = 1;
                                     getSupportFragmentManager()
                                             .beginTransaction()
-                                            .add(R.id.fragmentMain, fragmentAccount)
+                                            .replace(R.id.fragmentMain, fragmentAccount)
                                             .commit();
                                 }
 
@@ -67,7 +67,7 @@ public class Tracker extends AppCompatActivity implements
                                     flag = 3;
                                     getSupportFragmentManager()
                                             .beginTransaction()
-                                            .add(R.id.fragmentMain, fragmentAccount)
+                                            .replace(R.id.fragmentMain, fragmentAccount)
                                             .commit();
                                 }
 
