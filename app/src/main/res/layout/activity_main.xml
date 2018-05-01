@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_text"
+        android:layout_centerHorizontal="true"
+        android:padding="30dp"
+        android:id="@+id/title"
+        android:textColor="@color/colorPrimary"
+        android:textSize="30sp"/>
+
+    <EditText android:id="@+id/emailField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title"
+        android:inputType="textEmailAddress"
+        android:hint="@string/email_hint_text"
+        android:ellipsize="start"
+        android:gravity="center_horizontal"
+        android:background="@drawable/border_edit_text"
+        android:padding="10dp">
+    </EditText>
+
+    <EditText android:id="@+id/passwordField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/emailField"
+        android:layout_below="@+id/emailField"
+        android:hint="@string/password_hint"
+        android:ellipsize="start"
+        android:gravity="center_horizontal"
+        android:padding="10dp"
+        android:inputType="textPassword"
+        android:background="@drawable/border_edit_text"
+        android:layout_marginTop="10dp">
+
+    </EditText>
+
+    <Button android:id="@+id/signinButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/passwordField"
+        android:text="@string/signin_button_label"
+        android:textColor="#ffffff"
+        android:background="@drawable/main_button"
+        android:layout_marginTop="30dp"
+        android:textAlignment="center">
+
+    </Button>
+
+    <TextView android:id="@+id/signUpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:textColor="#2ea5de"
+        android:text="@string/sign_up_text">
+
+    </TextView>
+
+</RelativeLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_up_text"
+        android:layout_centerHorizontal="true"
+        android:padding="30dp"
+        android:id="@+id/signUp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="30sp"/>
+
+    <EditText android:id="@+id/emailFieldSignup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/signUp"
+        android:inputType="textEmailAddress"
+        android:hint="@string/email_hint_text"
+        android:ellipsize="start"
+        android:gravity="center_horizontal"
+        android:background="@drawable/border_edit_text"
+        android:padding="10dp">
+    </EditText>
+
+    <EditText android:id="@+id/passwordFieldSignup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/emailFieldSignup"
+        android:hint="@string/password_hint"
+        android:ellipsize="start"
+        android:gravity="center_horizontal"
+        android:padding="10dp"
+        android:inputType="textPassword"
+        android:background="@drawable/border_edit_text"
+        android:layout_marginTop="10dp">
+
+    </EditText>
+
+    <Button android:id="@+id/signupButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/passwordFieldSignup"
+        android:text="@string/sign_up_text"
+        android:textColor="#ffffff"
+        android:background="@drawable/main_button"
+        android:layout_marginTop="30dp"
+        android:textAlignment="center">
+
+    </Button>
+
+</RelativeLayout>
