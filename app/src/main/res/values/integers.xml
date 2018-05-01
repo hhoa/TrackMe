@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="saved_state_default_key">1</integer>
+    <integer name="saved_state_pause_key">2</integer>
+    <integer name="saved_state_replay_stop_key">3</integer>
+
+    <integer name="saved_distance_default_key">0</integer>
+    <integer name="saved_speed_default_key">0</integer>
+    <integer name="saved_time_default_stop_key">0</integer>
+</resources>

@@ -24,8 +24,9 @@ public class Tracker extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracker);
 
-        FragmentTracking fragmentTracking = FragmentTracking.newInstance("Tracking");
+        final FragmentTracking fragmentTracking = FragmentTracking.newInstance("Tracking");
         final FragmentAccount fragmentAccount = FragmentAccount.newInstance();
+        final FragmentHistory fragmentHistory = FragmentHistory.newInstance();
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -43,9 +44,10 @@ public class Tracker extends AppCompatActivity implements
                             case R.id.action_tracking:
                                 if (flag != 1) {
                                     flag = 1;
+                                    item.setChecked(true);
                                     getSupportFragmentManager()
                                             .beginTransaction()
-                                            .replace(R.id.fragmentMain, fragmentAccount)
+                                            .replace(R.id.fragmentMain, fragmentTracking)
                                             .commit();
                                 }
 
@@ -54,10 +56,11 @@ public class Tracker extends AppCompatActivity implements
                                 if (flag != 2)
                                 {
                                     flag = 2;
-//                                    getSupportFragmentManager()
-//                                            .beginTransaction()
-//                                            .replace(R.id.fragmentMain, fragmentHistory)
-//                                            .commit();
+                                    item.setChecked(true);
+                                    getSupportFragmentManager()
+                                            .beginTransaction()
+                                            .replace(R.id.fragmentMain, fragmentHistory)
+                                            .commit();
                                 }
 
                                 break;
@@ -65,6 +68,7 @@ public class Tracker extends AppCompatActivity implements
                                 if (flag != 3)
                                 {
                                     flag = 3;
+                                    item.setChecked(true);
                                     getSupportFragmentManager()
                                             .beginTransaction()
                                             .replace(R.id.fragmentMain, fragmentAccount)
