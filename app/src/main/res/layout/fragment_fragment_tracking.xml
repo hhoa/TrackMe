@@ -16,12 +16,12 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="6"/>
+            android:layout_weight="8"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -84,26 +84,29 @@
             <ImageView
                 android:id="@+id/btn_replay"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:contentDescription="Replay"
+                android:padding="10dp"
                 android:src="@drawable/ic_replay"
                 android:visibility="invisible"/>
 
             <ImageView
                 android:id="@+id/btn_rec_pause"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:contentDescription="Record/Pause"
+                android:padding="10dp"
                 android:visibility="invisible"/>
 
             <ImageView
                 android:id="@+id/btn_stop"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:contentDescription="Stop"
+                android:padding="10dp"
                 android:src="@drawable/ic_stop"
                 android:visibility="invisible"/>
 

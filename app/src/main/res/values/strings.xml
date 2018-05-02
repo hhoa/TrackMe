@@ -26,7 +26,7 @@
     <string name="sign_out_text">SIGN OUT</string>
     <string name="ok">OK</string>
     <string name="permission_access_location">We need to use GPS to access your location</string>
-    <string name="permissions_not_granted">Permission not granted. We need this to continue</string>
+    <string name="permissions_not_granted">Permission not granted. We need this to track your activity</string>
     <string name="default_distance_text">-- m</string>
     <string name="distance_text">Distance</string>
     <string name="speed_text">Speed</string>
