@@ -32,10 +32,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
@@ -58,13 +54,13 @@ import static android.content.ContentValues.TAG;
 public class FragmentTracking extends Fragment implements OnMapReadyCallback, View.OnClickListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM_UID = "param1";
     private static final long DEFAULT_MIN_TIME = 1000;      // IN MILLISEC
     private static final float DEFAULT_MIN_DISTANCE = 1;    // IN METER
 
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
+    private String mUID;
     private String locationProvider;
     private LocationManager locationManager;
     private LocationListener locationListener;
@@ -109,7 +105,7 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
     public static FragmentTracking newInstance(String param1) {
         FragmentTracking fragment = new FragmentTracking();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM_UID, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -118,7 +114,7 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            mUID = getArguments().getString(ARG_PARAM_UID);
         }
     }
 
@@ -151,8 +147,6 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
         txtSpeed = v.findViewById(R.id.txt_speed);
         txtTime = v.findViewById(R.id.txt_time);
 
-        FirebaseUser mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        String mUID = mFirebaseUser.getUid();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("lib").child(mUID);
 

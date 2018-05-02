@@ -12,7 +12,8 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class Tracker extends AppCompatActivity implements
         FragmentAccount.OnFragmentInteractionListener,
-        FragmentTracking.OnFragmentInteractionListener {
+        FragmentTracking.OnFragmentInteractionListener,
+        FragmentHistory.OnFragmentInteractionListener{
 
     //firebase auth
     public static FirebaseAuth mFirebaseAuth;
@@ -24,13 +25,19 @@ public class Tracker extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracker);
 
-        final FragmentTracking fragmentTracking = FragmentTracking.newInstance("Tracking");
+        String uID;
+        if (mFirebaseUser != null)
+            uID = mFirebaseUser.getUid();
+        else
+            uID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        final FragmentTracking fragmentTracking = FragmentTracking.newInstance(uID);
         final FragmentAccount fragmentAccount = FragmentAccount.newInstance();
-        final FragmentHistory fragmentHistory = FragmentHistory.newInstance();
+        final FragmentHistory fragmentHistory = FragmentHistory.newInstance(uID);
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragmentMain, fragmentTracking)
+                .add(R.id.fragmentMain, fragmentHistory)
                 .commit();
 
         flag = 1;

@@ -3,10 +3,30 @@ package com.example.hhoa.trackme;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 /**
@@ -19,15 +39,18 @@ import android.view.ViewGroup;
  */
 public class FragmentHistory extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM_UID = "param1";
+    private String mUID;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private ArrayList<TrackActivity> userActivity = new ArrayList<>();
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
 
     private OnFragmentInteractionListener mListener;
+
+    private RecyclerView mRecyclerView;
+    private LinearLayout linearLayout;
+    private RecyclerViewAdapter mRcvAdapter;
 
     public FragmentHistory() {
         // Required empty public constructor
@@ -37,16 +60,13 @@ public class FragmentHistory extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment FragmentHistory.
      */
     // TODO: Rename and change types and number of parameters
-    public static FragmentHistory newInstance(String param1, String param2) {
+    public static FragmentHistory newInstance(String param1) {
         FragmentHistory fragment = new FragmentHistory();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_PARAM_UID, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,8 +75,7 @@ public class FragmentHistory extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mUID = getArguments().getString(ARG_PARAM_UID);
         }
     }
 
@@ -64,7 +83,87 @@ public class FragmentHistory extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_fragment_history, container, false);
+        View v = inflater.inflate(R.layout.fragment_fragment_history, container, false);
+
+        getDataUserFromFirebase();
+        mySortActivity();
+
+
+        return v;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // Get the SupportMapFragment and request notification
+        // when the map is ready to be used.
+        mRcvAdapter = new RecyclerViewAdapter(getActivity(), userActivity);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView = view.findViewById(R.id.my_recycler_view);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(mRcvAdapter);
+    }
+
+    private void getDataUserFromFirebase() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = database.getReference("lib").child(mUID);
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot childDataSnapshot : dataSnapshot.getChildren()) {
+                    getSingleValue(childDataSnapshot);
+                }
+                mRcvAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void getSingleValue(DataSnapshot childDataSnapshot) {
+        long date = Long.parseLong(childDataSnapshot.child("date").getValue().toString());
+        if (checkExistKey(date))
+            return;
+        double distance = Double.parseDouble(childDataSnapshot.child("distance").getValue().toString());
+        double speed = Double.parseDouble(childDataSnapshot.child("speed").getValue().toString());
+        long time = Long.parseLong(childDataSnapshot.child("time").getValue().toString());
+        ArrayList<Double[]> listLoc = new ArrayList<>();
+        //get all user location
+        for (DataSnapshot locSnapshot: childDataSnapshot.child("location").getChildren()) {
+            listLoc.add(new Double[]{Double.parseDouble(locSnapshot.child("latitude").getValue().toString()),
+                    Double.parseDouble(locSnapshot.child("longitude").getValue().toString())});
+        }
+
+        userActivity.add(new TrackActivity(date, distance, speed, time, listLoc));
+    }
+
+    private void mySortActivity() {
+        Collections.sort(userActivity, new Comparator<TrackActivity>() {
+            public int compare(TrackActivity one, TrackActivity other) {
+                return Long.compare(other.getDate(), one.getDate());
+            }
+        });
+    }
+
+    private boolean checkExistKey(long key) {
+        return userActivity.contains(key);
+
+//        Iterator it = userActivity.entrySet().iterator();
+//        while (it.hasNext()) {
+//            Map.Entry pair = (Map.Entry)it.next();
+//            System.out.println(pair.getKey() + " = " + pair.getValue());
+//            if (pair.getKey().equals(key))
+//                return true;
+//            //it.remove(); // avoids a ConcurrentModificationException
+//        }
+//
+//        return false;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
