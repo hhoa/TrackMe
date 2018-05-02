@@ -62,7 +62,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                Log.i(TAG, "onMapReady: vao dy");
                 googleMap.setMinZoomPreference(10.0f);
                 googleMap.setMaxZoomPreference(20.0f);
 

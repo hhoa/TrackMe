@@ -19,6 +19,7 @@ public class Tracker extends AppCompatActivity implements
     public static FirebaseAuth mFirebaseAuth;
     public static FirebaseUser mFirebaseUser;
     private int flag;
+    private static FragmentHistory fragmentHistory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +34,11 @@ public class Tracker extends AppCompatActivity implements
 
         final FragmentTracking fragmentTracking = FragmentTracking.newInstance(uID);
         final FragmentAccount fragmentAccount = FragmentAccount.newInstance();
-        final FragmentHistory fragmentHistory = FragmentHistory.newInstance(uID);
+        fragmentHistory = FragmentHistory.newInstance(uID);
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragmentMain, fragmentHistory)
+                .add(R.id.fragmentMain, fragmentTracking)
                 .commit();
 
         flag = 1;
@@ -95,7 +96,13 @@ public class Tracker extends AppCompatActivity implements
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteractionTracking() {
+        // TODO: error when not moving to history at first
+        fragmentHistory.getDataUserFromFirebase();
+    }
+
+    @Override
+    public void onFragmentInteractionHistory() {
 
     }
 }

@@ -1,20 +1,18 @@
 package com.example.hhoa.trackme;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,9 +22,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -86,7 +83,7 @@ public class FragmentHistory extends Fragment {
         View v = inflater.inflate(R.layout.fragment_fragment_history, container, false);
 
         getDataUserFromFirebase();
-        mySortActivity();
+        mySortUserActivity();
 
 
         return v;
@@ -106,16 +103,17 @@ public class FragmentHistory extends Fragment {
         mRecyclerView.setAdapter(mRcvAdapter);
     }
 
-    private void getDataUserFromFirebase() {
+    public void getDataUserFromFirebase() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference("lib").child(mUID);
 
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot childDataSnapshot : dataSnapshot.getChildren()) {
                     getSingleValue(childDataSnapshot);
                 }
+                mySortUserActivity();
                 mRcvAdapter.notifyDataSetChanged();
             }
 
@@ -141,19 +139,25 @@ public class FragmentHistory extends Fragment {
         }
 
         userActivity.add(new TrackActivity(date, distance, speed, time, listLoc));
+        Log.i(TAG, "getSingleValue : " + userActivity.toString());
     }
 
-    private void mySortActivity() {
+    private void mySortUserActivity() {
+        Log.i(TAG, "mySortUserActivity: " + userActivity.toString());
         Collections.sort(userActivity, new Comparator<TrackActivity>() {
             public int compare(TrackActivity one, TrackActivity other) {
                 return Long.compare(other.getDate(), one.getDate());
             }
         });
+        Log.i(TAG, "mySortUserActivity: " + userActivity.toString());
     }
 
     private boolean checkExistKey(long key) {
-        return userActivity.contains(key);
-
+        for (int i = 0; i < userActivity.size(); i++){
+            if (userActivity.get(i).getDate() == key)
+                return true;
+        }
+        return false;
 //        Iterator it = userActivity.entrySet().iterator();
 //        while (it.hasNext()) {
 //            Map.Entry pair = (Map.Entry)it.next();
@@ -167,9 +171,9 @@ public class FragmentHistory extends Fragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onButtonPressed() {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onFragmentInteractionHistory();
         }
     }
 
@@ -202,6 +206,6 @@ public class FragmentHistory extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteractionHistory();
     }
 }

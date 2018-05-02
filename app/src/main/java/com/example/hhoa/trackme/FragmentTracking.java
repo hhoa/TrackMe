@@ -194,9 +194,9 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onButtonPressed() {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onFragmentInteractionTracking();
         }
     }
 
@@ -217,6 +217,18 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
     public void onPause() {
         super.onPause();
         updateState();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (locationManager != null) {
+            try {
+                locationManager.removeUpdates(locationListener);
+            } catch (NullPointerException e) {
+                Log.e(TAG, "Error while attempting removeUpdates, ignoring exception", e);
+            }
+        }
+        super.onDestroy();
     }
 
     private void updateState() {
@@ -304,7 +316,6 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
                 }
                 if (currState == getResources().getInteger(R.integer.saved_state_pause_key)) {
                     listLoc.add(new Double[]{location.getLatitude(), location.getLongitude()});
-                    Log.i(TAG, "onLocationChanged: " + listLoc.toString());
                     double deltaDistance = Util.distance(location.getLatitude(), prevLoc.getLatitude(),
                             location.getLongitude(), prevLoc.getLongitude(),
                             location.getAltitude(), prevLoc.getAltitude());
@@ -403,8 +414,6 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
     }
 
     private void uploadDataToFirebase() {
-        Toast.makeText(getActivity(), "Uploading ....", Toast.LENGTH_LONG).show();
-
         DatabaseReference childRef = myRef.push();
         childRef.child("date").setValue(ServerValue.TIMESTAMP);
         childRef.child("distance").setValue(Double.toString(currDistance));
@@ -418,6 +427,7 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
             locChildRef.child(Integer.toString(count)).child("longitude").setValue(t[1]);
             count += 1;
         }
+        mListener.onFragmentInteractionTracking();
     }
 
     private void replay() {
@@ -493,6 +503,6 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteractionTracking();
     }
 }
