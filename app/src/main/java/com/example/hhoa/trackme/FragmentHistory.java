@@ -1,10 +1,12 @@
 package com.example.hhoa.trackme;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -82,9 +84,9 @@ public class FragmentHistory extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_fragment_history, container, false);
 
-        getDataUserFromFirebase();
+        if (userActivity == null || userActivity.isEmpty())
+            getDataUserFromFirebase(mUID);
         mySortUserActivity();
-
 
         return v;
     }
@@ -103,9 +105,11 @@ public class FragmentHistory extends Fragment {
         mRecyclerView.setAdapter(mRcvAdapter);
     }
 
-    public void getDataUserFromFirebase() {
+    public void getDataUserFromFirebase(String userID) {
+        Log.i(TAG, "getDataUserFromFirebase: " + userID);
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference("lib").child(mUID);
+        Log.i(TAG, "getDataUserFromFirebase: " + database.toString());
+        final DatabaseReference myRef = database.getReference("lib").child(userID);
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -114,7 +118,9 @@ public class FragmentHistory extends Fragment {
                     getSingleValue(childDataSnapshot);
                 }
                 mySortUserActivity();
-                mRcvAdapter.notifyDataSetChanged();
+
+                if (mRcvAdapter != null)
+                    mRcvAdapter.notifyDataSetChanged();
             }
 
             @Override

@@ -67,7 +67,7 @@ public class FragmentAccount extends Fragment implements View.OnClickListener {
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         TextView txt_showEmail = (TextView)v.findViewById(R.id.txt_account);
-        txt_showEmail.setText(getString(R.string.display_signin_account, mFirebaseUser.getEmail()));
+        txt_showEmail.setText(mFirebaseUser.getEmail());
 
         Button btn_logout = v.findViewById(R.id.btn_signoutAccount);
         btn_logout.setOnClickListener(this);

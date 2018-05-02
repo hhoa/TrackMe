@@ -1,9 +1,11 @@
 package com.example.hhoa.trackme;
 
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
@@ -20,13 +22,13 @@ public class Tracker extends AppCompatActivity implements
     public static FirebaseUser mFirebaseUser;
     private int flag;
     private static FragmentHistory fragmentHistory;
+    private String uID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracker);
 
-        String uID;
         if (mFirebaseUser != null)
             uID = mFirebaseUser.getUid();
         else
@@ -98,11 +100,45 @@ public class Tracker extends AppCompatActivity implements
     @Override
     public void onFragmentInteractionTracking() {
         // TODO: error when not moving to history at first
-        fragmentHistory.getDataUserFromFirebase();
+        fragmentHistory.getDataUserFromFirebase(uID);
     }
 
     @Override
     public void onFragmentInteractionHistory() {
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        boolean onSave = true;
+        if(onSave) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            builder.setTitle(R.string.confirm_text);
+            builder.setMessage(R.string.quit_text);
+
+            builder.setPositiveButton(R.string.yes_text, new DialogInterface.OnClickListener() {
+
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+//                    finishAndRemoveTask();
+                    finish();
+                }
+            });
+
+            builder.setNegativeButton(R.string.no_text, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // Do nothing
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+        else{
+        }
     }
 }

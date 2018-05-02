@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -28,9 +27,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -73,7 +74,7 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
     private ImageView btnRecordPause;
     private ImageView btnReplay;
     private ImageView btnStop;
-    private Marker firstMarker;
+    private Marker myMarker;
     private boolean firstFlagRecord = false;
     private TextView txtDistance;
     private TextView txtSpeed;
@@ -89,6 +90,7 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
 
     private ArrayList<Double[]> listLoc;
     private ArrayList<Double> listSpeed;
+    private ArrayList<Polyline> listPolyLine;
 
     public FragmentTracking() {
         // Required empty public constructor
@@ -152,7 +154,7 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
 
         listLoc = new ArrayList<>();
         listSpeed = new ArrayList<>();
-
+        listPolyLine = new ArrayList<>();
 
         updateButtonUI();
 
@@ -257,10 +259,10 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
         if (prevLoc == null)
             prevLoc = locationManager.getLastKnownLocation(locationProvider);
 
-        LatLng sydney = new LatLng(prevLoc.getLatitude(), prevLoc.getLongitude());
-        firstMarker = googleMap.addMarker(new MarkerOptions().position(sydney)
+        LatLng pos = new LatLng(prevLoc.getLatitude(), prevLoc.getLongitude());
+        myMarker = googleMap.addMarker(new MarkerOptions().position(pos)
                 .title("Current Marker"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney , 16.0f));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pos , 16.0f));
         myMap = googleMap;
     }
 
@@ -305,7 +307,8 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
                 LatLng myNewLoc = new LatLng(location.getLatitude(), location.getLongitude());
                 if (firstFlagRecord) {
                     firstFlagRecord = false;
-                    firstMarker.remove();
+                    myMarker.remove();
+                    myMarker = null;
                     myMap.addMarker(new MarkerOptions().position(myNewLoc)
                             .title("Start point"));
                     myMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myNewLoc , 16.0f));
@@ -317,8 +320,7 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
                 if (currState == getResources().getInteger(R.integer.saved_state_pause_key)) {
                     listLoc.add(new Double[]{location.getLatitude(), location.getLongitude()});
                     double deltaDistance = Util.distance(location.getLatitude(), prevLoc.getLatitude(),
-                            location.getLongitude(), prevLoc.getLongitude(),
-                            location.getAltitude(), prevLoc.getAltitude());
+                            location.getLongitude(), prevLoc.getLongitude());
                     currDistance += deltaDistance;
                     if (currDistance == 0) {
                         txtDistance.setText(getString(R.string.display_distance, "--"));
@@ -338,11 +340,19 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
                     if (flag) {
                         LatLng myOldLoc = new LatLng(prevLoc.getLatitude(), prevLoc.getLongitude());
                         myMap.moveCamera(CameraUpdateFactory.newLatLng(myNewLoc));
-                        myMap.addPolyline(new PolylineOptions()
+                        listPolyLine.add(myMap.addPolyline(new PolylineOptions()
                                 .add(myOldLoc, myNewLoc)
                                 .width(8)
-                                .color(Color.RED));
+                                .color(Color.RED)));
                         prevLoc = location;
+
+                        if (myMarker == null)
+                            myMarker = myMap.addMarker(new MarkerOptions()
+                                    .position(myNewLoc)
+                                    .title("YOU")
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)));
+                        else
+                            myMarker.setPosition(myNewLoc);
                     }
                 }
             }
@@ -404,13 +414,6 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
 
         // TODO: update database in firebase
         uploadDataToFirebase();
-
-        currDistance = 0;
-        currSpeed = 0;
-        currTime = 0;
-        listLoc.clear();
-        listSpeed.clear();
-        setDefaultParameter();
     }
 
     private void uploadDataToFirebase() {
@@ -428,6 +431,7 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
             count += 1;
         }
         mListener.onFragmentInteractionTracking();
+        Toast.makeText(getActivity(), R.string.see_session_history_text, Toast.LENGTH_SHORT).show();
     }
 
     private void replay() {
@@ -449,8 +453,6 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
         currState = getResources().getInteger(R.integer.saved_state_pause_key);
         firstFlagRecord = true;
 
-        listLoc = new ArrayList<>();
-        listSpeed = new ArrayList<>();
         setDefaultParameter();
         locationManager.removeUpdates(locationListener);
         listenToLocation();
@@ -459,6 +461,21 @@ public class FragmentTracking extends Fragment implements OnMapReadyCallback, Vi
     }
 
     private void setDefaultParameter() {
+        if (myMarker != null)
+            myMarker.remove();
+        for(Polyline line : listPolyLine)
+        {
+            line.remove();
+        }
+        listPolyLine.clear();
+        listPolyLine = new ArrayList<>();
+        listLoc = new ArrayList<>();
+        listSpeed = new ArrayList<>();
+        currDistance = 0;
+        currSpeed = 0;
+        currTime = 0;
+        listLoc.clear();
+        listSpeed.clear();
         txtDistance.setText(getString(R.string.display_distance, "--"));
         txtSpeed.setText(getString(R.string.display_speed, "--"));
     }

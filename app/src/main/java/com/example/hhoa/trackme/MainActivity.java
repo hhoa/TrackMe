@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText passwordEditText;
     private FirebaseAuth mFirebaseAuth;
     private View mLayout;
+    private Button logInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         emailEditText = findViewById(R.id.emailField);
         passwordEditText = findViewById(R.id.passwordField);
 
-        Button logInButton = findViewById(R.id.signinButton);
+        logInButton = findViewById(R.id.signinButton);
         logInButton.setOnClickListener(this);
         TextView signUpTextView = findViewById(R.id.signUpText);
         signUpTextView.setOnClickListener(this);
@@ -116,8 +117,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 SignUpDialog signUpDialog = new SignUpDialog(MainActivity.this);
                 signUpDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 signUpDialog.show();
+
                 break;
             case R.id.signinButton:
+                setTextButton(logInButton, R.string.logging);
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
@@ -132,12 +135,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             .setPositiveButton(android.R.string.ok, null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
+                    setTextButton(logInButton, R.string.signin_button_label);
                 } else {
                     mFirebaseAuth.signInWithEmailAndPassword(email, password)
                             .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
+                                        setTextButton(logInButton, R.string.signin_button_label);
                                         startTracker();
                                     } else {
                                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -146,12 +151,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                                 .setPositiveButton(android.R.string.ok, null);
                                         AlertDialog dialog = builder.create();
                                         dialog.show();
+                                        setTextButton(logInButton, R.string.signin_button_label);
                                     }
                                 }
                             });
                 }
+
                 break;
         }
+    }
+
+    private void setTextButton(Button btn, int content) {
+        btn.setText(getResources().getString(content));
+        btn.setClickable(!btn.isClickable());
     }
 
     private void startTracker() {
@@ -169,19 +181,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(onSave) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-            builder.setTitle("Confirm");
-            builder.setMessage("Do you want to save changes?");
+            builder.setTitle(R.string.confirm_text);
+            builder.setMessage(R.string.quit_text);
 
-            builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(R.string.yes_text, new DialogInterface.OnClickListener() {
 
                 public void onClick(DialogInterface dialog, int which) {
-//                    saveMedia();
                     dialog.dismiss();
                     finishAndRemoveTask();
                 }
             });
 
-            builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(R.string.no_text, new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

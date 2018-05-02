@@ -33,4 +33,13 @@
     <string name="default_speed_text">-- m/s</string>
     <string name="default_time_tracking_text">00:00:00</string>
     <string name="saved_state_key">KEY_STATE_TRACKING</string>
+    <string name="avg_speed_text">Avg. Speed</string>
+    <string name="logging">Logging in</string>
+    <string name="quit_text">Are you sure you want to quit?</string>
+    <string name="confirm_text">Confirm</string>
+    <string name="yes_text">YES</string>
+    <string name="no_text">NO</string>
+    <string name="your_email_text">Your email</string>
+    <string name="see_session_history_text">Go to history tab to see sessions</string>
+    <string name="no_network_text">No internet connection. Please connect to Wifi or cellular to load data.</string>
 </resources>
